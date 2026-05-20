@@ -39,7 +39,16 @@ function isPublicJobBrowseRequest(cfg: InternalAxiosRequestConfig) {
   if (method !== 'get') return false
   const rawUrl = cfg.url ?? ''
   const path = rawUrl.split('?')[0]
-  return path === '/jobs' || (path.startsWith('/jobs/') && !path.endsWith('/close'))
+  // Public: job list (`/jobs`) and job detail (`/jobs/{id}`) only.
+  if (path === '/jobs') return true
+  if (path.startsWith('/jobs/')) {
+    const rest = path.substring('/jobs/'.length)
+    // treat `/jobs/{id}` (no extra segments) as public; anything with extra
+    // path segments (e.g. `/jobs/{id}/proposals`) requires auth
+    if (!rest.includes('/')) return true
+    return false
+  }
+  return false
 }
 
 let refreshPromise: Promise<string | null> | null = null
