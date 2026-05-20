@@ -9,6 +9,7 @@ import { JobListPage } from './pages/jobs/JobListPage'
 import { EmployerJobsPage } from './pages/employer/EmployerJobsPage'
 import { JobEditorPage } from './pages/employer/JobEditorPage'
 import { AdminUsersPage } from './pages/admin/AdminUsersPage'
+import { FreelancerProposalsPage } from './pages/freelancer/FreelancerProposalsPage'
 
 export default function App() {
   return (
@@ -21,6 +22,15 @@ export default function App() {
 
           <Route path="jobs" element={<JobListPage />} />
           <Route path="jobs/:jobId" element={<JobDetailPage />} />
+
+          <Route
+            path="freelancer/proposals"
+            element={
+              <ProtectedRoute roles={['FREELANCER']}>
+                <FreelancerProposalsPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="employer/jobs"
