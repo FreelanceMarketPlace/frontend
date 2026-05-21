@@ -10,6 +10,13 @@ function budgetText(j: JobListItem) {
   return `HOURLY ${j.hourlyRate ?? '—'} × ${j.estimatedHours ?? '—'}`
 }
 
+const statusColors: Record<ProposalStatus, string> = {
+  PENDING: 'pill-primary',
+  SHORTLISTED: 'pill-success',
+  REJECTED: 'pill-error',
+  WITHDRAWN: 'pill-muted',
+}
+
 export function EmployerJobsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -65,27 +72,45 @@ export function EmployerJobsPage() {
     }
   }
 
-  const handleAcceptProposal = async (proposalId: string) => {
+  const handleShortlistProposal = async (proposalId: string) => {
     try {
-      await proposalApi.acceptProposal(proposalId)
-      // Reload proposals
+      await proposalApi.shortlistProposal(proposalId)
       if (selectedJobId) {
         await loadProposals(selectedJobId)
       }
     } catch (err: any) {
-      setProposalsError(err?.response?.data?.message ?? err?.message ?? 'Failed to accept proposal')
+      setProposalsError(err?.response?.data?.message ?? err?.message ?? 'Failed to shortlist proposal')
     }
   }
 
   const handleRejectProposal = async (proposalId: string) => {
     try {
       await proposalApi.rejectProposal(proposalId)
-      // Reload proposals
       if (selectedJobId) {
         await loadProposals(selectedJobId)
       }
     } catch (err: any) {
       setProposalsError(err?.response?.data?.message ?? err?.message ?? 'Failed to reject proposal')
+    }
+  }
+
+  const handleCreateOffer = async (proposal: ProposalResponse) => {
+    try {
+      const selectedJob = items.find((job) => job.id === selectedJobId)
+      if (!selectedJob) {
+        setProposalsError('Job not found for creating offer')
+        return
+      }
+
+      await proposalApi.createOffer(proposal.id, {
+        estimatedDuration: proposal.estimatedDuration,
+        jobDescription: `Offer for job: ${selectedJob.title}`,
+      })
+      if (selectedJobId) {
+        await loadProposals(selectedJobId)
+      }
+    } catch (err: any) {
+      setProposalsError(err?.response?.data?.message ?? err?.message ?? 'Failed to create offer')
     }
   }
 
@@ -149,7 +174,7 @@ export function EmployerJobsPage() {
                 <Link className="btn" to={`/employer/jobs/${j.id}/edit`}>
                   Edit
                 </Link>
-                <button className="btn" onClick={() => loadProposals(j.id)}>
+                <button className="btn" type="button" onClick={() => loadProposals(j.id)}>
                   Proposals ({j.proposalCount})
                 </button>
               </div>
@@ -195,15 +220,13 @@ export function EmployerJobsPage() {
                       <div className="stack" style={{ gap: 4, flex: 1 }}>
                         <div style={{ fontWeight: 600 }}>Freelancer: {proposal.freelancerId}</div>
                         <div className="row" style={{ gap: 8 }}>
-                          <span className={`pill ${proposal.status === 'PENDING' ? 'pill-primary' : proposal.status === 'ACCEPTED' ? 'pill-success' : 'pill-error'}`}>
-                            {proposal.status}
-                          </span>
-                          <span className="hint">Bid: ${proposal.bidAmount.toFixed(2)}</span>
+                          <span className={`pill ${statusColors[proposal.status]}`}>{proposal.status}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div style={{ color: 'var(--muted)', fontSize: 14, whiteSpace: 'pre-wrap' }}>{proposal.message}</div>
+                    <div style={{ color: 'var(--muted)', fontSize: 14, whiteSpace: 'pre-wrap' }}>{proposal.coverLetter}</div>
+                    <div className="hint" style={{ fontSize: 12 }}>Estimated duration: {proposal.estimatedDuration} days</div>
 
                     {proposal.status === 'PENDING' && (
                       <div className="row" style={{ gap: 8, justifyContent: 'flex-end' }}>
@@ -214,11 +237,16 @@ export function EmployerJobsPage() {
                         >
                           Reject
                         </button>
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => handleAcceptProposal(proposal.id)}
-                        >
-                          Accept
+                        <button className="btn btn-primary" onClick={() => handleShortlistProposal(proposal.id)}>
+                          Shortlist
+                        </button>
+                      </div>
+                    )}
+
+                    {proposal.status === 'SHORTLISTED' && (
+                      <div className="row" style={{ gap: 8, justifyContent: 'flex-end' }}>
+                        <button className="btn btn-primary" onClick={() => handleCreateOffer(proposal)}>
+                          Create Offer
                         </button>
                       </div>
                     )}

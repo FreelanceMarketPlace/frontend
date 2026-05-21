@@ -5,14 +5,14 @@ import type { ProposalResponse, ProposalStatus } from '../../types/proposal'
 
 const statusColors: Record<ProposalStatus, string> = {
   PENDING: 'pill-primary',
-  ACCEPTED: 'pill-success',
+  SHORTLISTED: 'pill-success',
   REJECTED: 'pill-error',
   WITHDRAWN: 'pill-muted',
 }
 
 const statusLabels: Record<ProposalStatus, string> = {
   PENDING: 'Pending',
-  ACCEPTED: 'Accepted',
+  SHORTLISTED: 'Shortlisted',
   REJECTED: 'Rejected',
   WITHDRAWN: 'Withdrawn',
 }
@@ -86,7 +86,7 @@ export function FreelancerProposalsPage() {
       {error && <div className="alert alert-error">{error}</div>}
 
       <div className="row" style={{ gap: 8 }}>
-        {(['ALL', 'PENDING', 'ACCEPTED', 'REJECTED', 'WITHDRAWN'] as const).map((status) => (
+        {(['ALL', 'PENDING', 'SHORTLISTED', 'REJECTED', 'WITHDRAWN'] as const).map((status) => (
           <button
             key={status}
             className={`btn ${selectedStatus === status ? 'btn-primary' : ''}`}
@@ -117,14 +117,15 @@ export function FreelancerProposalsPage() {
                       <span className="hint">Created: {new Date(proposal.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontWeight: 800, fontSize: 18, color: 'var(--accent)' }}>${proposal.bidAmount.toFixed(2)}</div>
-                  </div>
                 </div>
 
                 <div className="divider" />
 
-                <div style={{ color: 'var(--muted)', whiteSpace: 'pre-wrap', fontSize: 14 }}>{proposal.message}</div>
+                <div style={{ color: 'var(--muted)', whiteSpace: 'pre-wrap', fontSize: 14 }}>{proposal.coverLetter}</div>
+
+                <div className="hint" style={{ fontSize: 12 }}>
+                  Estimated duration: {proposal.estimatedDuration} days
+                </div>
 
                 {proposal.status === 'PENDING' && (
                   <div className="row" style={{ justifyContent: 'flex-end' }}>

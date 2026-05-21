@@ -15,6 +15,7 @@ export function AppLayout() {
             <nav className="nav">
               <Link to="/jobs">Jobs</Link>
               {user?.role === 'FREELANCER' ? <Link to="/freelancer/proposals">My Proposals</Link> : null}
+              {user?.role === 'FREELANCER' ? <Link to="/freelancer/offers">My Offers</Link> : null}
               {user?.role === 'EMPLOYER' ? <Link to="/employer/jobs">Employer</Link> : null}
               {user?.role === 'ADMIN' || user?.role === 'SUPPORTER' ? <Link to="/admin/users">Admin</Link> : null}
             </nav>

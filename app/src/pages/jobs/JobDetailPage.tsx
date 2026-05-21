@@ -18,8 +18,8 @@ export function JobDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [job, setJob] = useState<JobDetail | null>(null)
   const [showProposalModal, setShowProposalModal] = useState(false)
-  const [proposalBidAmount, setProposalBidAmount] = useState<string>('')
-  const [proposalMessage, setProposalMessage] = useState<string>('')
+  const [proposalCoverLetter, setProposalCoverLetter] = useState<string>('')
+  const [proposalEstimatedDuration, setProposalEstimatedDuration] = useState<string>('')
   const [proposalLoading, setProposalLoading] = useState(false)
   const [proposalError, setProposalError] = useState<string | null>(null)
 
@@ -49,24 +49,17 @@ export function JobDetailPage() {
     setProposalLoading(true)
 
     try {
-      const bidAmountNum = parseFloat(proposalBidAmount)
-      if (isNaN(bidAmountNum) || bidAmountNum <= 0) {
-        setProposalError('Bid amount must be a valid positive number')
-        setProposalLoading(false)
-        return
-      }
-
       if (!jobId) return
 
       const req: SubmitProposalRequest = {
-        bidAmount: bidAmountNum,
-        message: proposalMessage,
+        coverLetter: proposalCoverLetter,
+        estimatedDuration: Number(proposalEstimatedDuration),
       }
 
       await proposalApi.submitProposal(jobId, req)
       setShowProposalModal(false)
-      setProposalBidAmount('')
-      setProposalMessage('')
+      setProposalCoverLetter('')
+      setProposalEstimatedDuration('')
       setProposalError(null)
       // Optionally refresh job data to see updated proposal count
       const updatedJob = await jobApi.getJob(jobId)
@@ -148,30 +141,29 @@ export function JobDetailPage() {
             <div className="divider" />
             <form className="stack" onSubmit={handleSubmitProposal} style={{ gap: 12 }}>
               <div className="stack" style={{ gap: 6 }}>
-                <label className="hint">Bid Amount</label>
-                <input
-                  className="input"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={proposalBidAmount}
-                  onChange={(e) => setProposalBidAmount(e.target.value)}
-                  placeholder="e.g. 500.00"
-                  required
-                />
-              </div>
-
-              <div className="stack" style={{ gap: 6 }}>
-                <label className="hint">Proposal Message</label>
+                <label className="hint">Cover Letter</label>
                 <textarea
                   className="input"
-                  value={proposalMessage}
-                  onChange={(e) => setProposalMessage(e.target.value)}
+                  value={proposalCoverLetter}
+                  onChange={(e) => setProposalCoverLetter(e.target.value)}
                   placeholder="Introduce yourself and why you're a good fit for this job..."
                   minLength={10}
                   maxLength={500}
                   required
                   rows={4}
+                />
+              </div>
+
+              <div className="stack" style={{ gap: 6 }}>
+                <label className="hint">Estimated Duration (days)</label>
+                <input
+                  className="input"
+                  type="number"
+                  min="1"
+                  value={proposalEstimatedDuration}
+                  onChange={(e) => setProposalEstimatedDuration(e.target.value)}
+                  placeholder="e.g. 14"
+                  required
                 />
               </div>
 
