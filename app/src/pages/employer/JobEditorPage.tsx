@@ -156,9 +156,11 @@ export function JobEditorPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               minLength={50}
+              maxLength={20000}
               required
               placeholder="Describe scope, requirements, and deliverables…"
             />
+            <div className="hint">{description.length}/20000 ký tự (tối thiểu 50)</div>
           </div>
 
           <div className="grid grid-2">

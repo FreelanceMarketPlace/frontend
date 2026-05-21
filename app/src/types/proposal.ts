@@ -1,8 +1,9 @@
-export type ProposalStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'WITHDRAWN'
+export type ProposalStatus = 'PENDING' | 'SHORTLISTED' | 'REJECTED' | 'WITHDRAWN'
+export type OfferStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'EXPIRED'
 
 export interface SubmitProposalRequest {
-  bidAmount: number
-  message: string
+  coverLetter: string
+  estimatedDuration: number
 }
 
 export interface ProposalResponse {
@@ -10,9 +11,31 @@ export interface ProposalResponse {
   jobId: string
   jobTitle: string
   freelancerId: string
-  bidAmount: number
-  message: string
+  coverLetter: string
+  estimatedDuration: number
   status: ProposalStatus
+  createdAt: string
+  updatedAt: string
+  respondedAt: string | null
+}
+
+export interface CreateOfferRequest {
+  estimatedDuration: number
+  jobDescription: string
+  expiresAt?: string
+}
+
+export interface OfferResponse {
+  offerId: string
+  jobId: string
+  proposalId: string
+  employerId: string
+  freelancerId: string
+  jobDescription: string
+  contractValue: number
+  estimatedDuration: number
+  status: OfferStatus
+  expiresAt: string
   createdAt: string
   updatedAt: string
   respondedAt: string | null

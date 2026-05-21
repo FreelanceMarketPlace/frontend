@@ -1,5 +1,11 @@
 import { jobHttp } from './http'
-import type { SubmitProposalRequest, ProposalResponse, PageResponse } from '../types/proposal'
+import type {
+  SubmitProposalRequest,
+  ProposalResponse,
+  PageResponse,
+  OfferResponse,
+  CreateOfferRequest,
+} from '../types/proposal'
 
 /**
  * Submit a proposal for a job
@@ -36,9 +42,13 @@ export async function getFreelancerProposals(status?: string, page = 0, size = 2
 /**
  * Accept a proposal (Employer only)
  */
-export async function acceptProposal(proposalId: string) {
-  const res = await jobHttp.post<ProposalResponse>(`/proposals/${proposalId}/accept`, {})
+export async function shortlistProposal(proposalId: string) {
+  const res = await jobHttp.post<ProposalResponse>(`/proposals/${proposalId}/shortlist`, {})
   return res.data
+}
+
+export async function acceptProposal(proposalId: string) {
+  return shortlistProposal(proposalId)
 }
 
 /**
@@ -54,5 +64,29 @@ export async function rejectProposal(proposalId: string) {
  */
 export async function withdrawProposal(proposalId: string) {
   const res = await jobHttp.post<ProposalResponse>(`/proposals/${proposalId}/withdraw`, {})
+  return res.data
+}
+
+export async function createOffer(proposalId: string, req: CreateOfferRequest) {
+  const res = await jobHttp.post<OfferResponse>(`/proposals/${proposalId}/offers`, req)
+  return res.data
+}
+
+export async function getFreelancerOffers(status?: string, page = 0, size = 20) {
+  const params: Record<string, any> = { page, size }
+  if (status) {
+    params.status = status
+  }
+  const res = await jobHttp.get<PageResponse<OfferResponse>>('/freelancer/offers', { params })
+  return res.data
+}
+
+export async function acceptOffer(offerId: string) {
+  const res = await jobHttp.post<OfferResponse>(`/offers/${offerId}/accept`, {})
+  return res.data
+}
+
+export async function declineOffer(offerId: string) {
+  const res = await jobHttp.post<OfferResponse>(`/offers/${offerId}/decline`, {})
   return res.data
 }
