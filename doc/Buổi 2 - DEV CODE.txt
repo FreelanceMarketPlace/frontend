@@ -1,0 +1,36 @@
+      BUỔI 2 – XÂY DỰNG GIAO DIỆN & TÍCH HỢP HOÀN CHỈNH
+Mục tiêu
+   - Xây dựng giao diện người dùng (user) và giao diện quản trị (admin) cho tối thiểu 2 chức
+     năng.
+   - Tích hợp giao diện với phần xử lý phía máy chủ (có thể qua API, form submit, hoặc
+     SDK, …).
+   - Đảm bảo phân quyền được thể hiện trên giao diện (ẩn/hiện chức năng).
+Yêu cầu cụ thể
+   - Dựng giao diện (HTML/CSS/JS hoặc sử dụng thư viện giao diện) dựa trên wireframe đã
+     thiết kế.
+   - Các trang bắt buộc:
+          + Đăng nhập / đăng ký.
+          + Trang dành cho user (VD: danh sách sản phẩm, giỏ hàng/đặt hàng, lịch sử đơn
+     hàng).
+          + Trang dành cho admin (VD: quản lý thực thể, danh sách đơn hàng, cập nhật trạng
+     thái).
+   - Kết nối giao diện với server: gửi dữ liệu từ form hoặc gọi API, xử lý phản hồi, hiển thị
+     thông báo lỗi/thành công.
+   - Kiểm tra toàn bộ luồng: admin tạo/sửa dữ liệu → user nhìn thấy và tương tác → tạo đơn
+     hàng → admin cập nhật trạng thái.
+Kết quả cần đạt
+   - Giao diện hoàn chỉnh, có thể thao tác được tối thiểu 2 chức năng.
+   - Dữ liệu đồng bộ giữa giao diện và server.
+   - Không còn lỗi phân quyền trên giao diện.
+Kết quả cần nộp
+   - Mã nguồn giao diện (đã push lên cùng repository hoặc repository riêng).
+   - Video demo ngắn (tối đa 5 phút) quay màn hình thực hiện:
+          + Admin đăng nhập, thực hiện tối thiểu 1 nghiệp vụ quản trị.
+          + User đăng nhập, thực hiện tối thiểu 1 nghiệp vụ
+   - File screenshots.zip chụp các màn hình chính.
+
+
+
+
+                                                                                               1
+
