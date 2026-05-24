@@ -5,4 +5,5 @@ function stripTrailingSlash(url: string) {
 export const env = {
   userApiBaseUrl: stripTrailingSlash(import.meta.env.VITE_USER_API_BASE_URL ?? 'http://localhost:8081'),
   jobApiBaseUrl: stripTrailingSlash(import.meta.env.VITE_JOB_API_BASE_URL ?? 'http://localhost:8082'),
+  contractApiBaseUrl: stripTrailingSlash(import.meta.env.VITE_CONTRACT_API_BASE_URL ?? 'http://localhost:8083'),
 }
