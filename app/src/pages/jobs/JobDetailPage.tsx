@@ -221,21 +221,41 @@ export function JobDetailPage() {
             {/* Stats grid */}
             <div className="jd-stats-grid">
               <div className="jd-stat">
-                <span className="jd-stat-label">💰 Ngân sách</span>
+                <span className="jd-stat-label">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display:'inline',verticalAlign:'middle',marginRight:4 }}>
+                    <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                  Ngân sách
+                </span>
                 <span className="jd-stat-value">{formatBudget(job)}</span>
               </div>
               <div className="jd-stat">
-                <span className="jd-stat-label">💼 Hình thức</span>
+                <span className="jd-stat-label">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display:'inline',verticalAlign:'middle',marginRight:4 }}>
+                    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                  </svg>
+                  Hình thức
+                </span>
                 <span className="jd-stat-value">{job.budgetType === 'FIXED' ? 'Cố định' : 'Theo giờ'}</span>
               </div>
               <div className="jd-stat">
-                <span className="jd-stat-label">📅 Deadline</span>
+                <span className="jd-stat-label">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display:'inline',verticalAlign:'middle',marginRight:4 }}>
+                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  Deadline
+                </span>
                 <span className="jd-stat-value" style={urgentDl ? { color: '#dc2626' } : undefined}>
                   {deadline}
                 </span>
               </div>
               <div className="jd-stat">
-                <span className="jd-stat-label">📝 Đề xuất</span>
+                <span className="jd-stat-label">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display:'inline',verticalAlign:'middle',marginRight:4 }}>
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  Đề xuất
+                </span>
                 <span className="jd-stat-value">{(job as any).proposalCount ?? 0} người</span>
               </div>
             </div>
@@ -268,34 +288,34 @@ export function JobDetailPage() {
               </div>
 
               <div className="jd-info-list">
-                <InfoRow icon="🏷️" label="Trạng thái">
+                <InfoRow icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>} label="Trạng thái">
                   <span className="jd-status-badge" style={{ background: ss.bg, color: ss.color, fontSize: 11 }}>
                     {ss.label}
                   </span>
                 </InfoRow>
-                <InfoRow icon="👤" label="Nhà tuyển dụng">
+                <InfoRow icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>} label="Nhà tuyển dụng">
                   <span className="jd-info-value">{(job as any).employerName ?? job.employerId}</span>
                 </InfoRow>
-                <InfoRow icon="💰" label="Ngân sách">
+                <InfoRow icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>} label="Ngân sách">
                   <span className="jd-info-value">{formatBudget(job)}</span>
                 </InfoRow>
-                <InfoRow icon="💼" label="Hình thức">
+                <InfoRow icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>} label="Hình thức">
                   <span className="jd-info-value">{job.budgetType === 'FIXED' ? 'Cố định' : 'Theo giờ'}</span>
                 </InfoRow>
                 {job.estimatedHours != null && (
-                  <InfoRow icon="⏱️" label="Số giờ ước tính">
+                  <InfoRow icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>} label="Số giờ ước tính">
                     <span className="jd-info-value">{job.estimatedHours}h</span>
                   </InfoRow>
                 )}
-                <InfoRow icon="📅" label="Deadline">
+                <InfoRow icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>} label="Deadline">
                   <span className="jd-info-value" style={urgentDl ? { color: '#dc2626', fontWeight: 700 } : undefined}>
                     {deadline}
                   </span>
                 </InfoRow>
-                <InfoRow icon="🕐" label="Đăng lúc">
+                <InfoRow icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>} label="Đăng lúc">
                   <span className="jd-info-value">{(job as any).createdAt?.slice(0, 10) ?? '—'}</span>
                 </InfoRow>
-                <InfoRow icon="📝" label="Số đề xuất">
+                <InfoRow icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>} label="Số đề xuất">
                   <span className="jd-info-value">{(job as any).proposalCount ?? 0} người</span>
                 </InfoRow>
               </div>
@@ -432,7 +452,7 @@ export function JobDetailPage() {
 }
 
 /* ── Small helper component ── */
-function InfoRow({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
+function InfoRow({ icon, label, children }: { icon: React.ReactNode; label: string; children: React.ReactNode }) {
   return (
     <div className="jd-info-row">
       <span className="jd-info-icon">{icon}</span>
@@ -646,7 +666,7 @@ const css = `
     font-size: 12.5px;
   }
   .jd-info-row:last-child { border-bottom: none; }
-  .jd-info-icon { font-size: 13px; }
+  .jd-info-icon { display: flex; align-items: center; color: var(--text-muted, #9ca3af); }
   .jd-info-label { color: var(--text-muted, #6b7280); font-weight: 500; }
   .jd-info-value { font-weight: 600; color: var(--text, #111827); text-align: right; }
 
