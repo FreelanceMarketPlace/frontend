@@ -7,10 +7,16 @@ import { RegisterPage } from './pages/auth/RegisterPage'
 import { JobDetailPage } from './pages/jobs/JobDetailPage'
 import { JobListPage } from './pages/jobs/JobListPage'
 import { EmployerJobsPage } from './pages/employer/EmployerJobsPage'
+import { EmployerContractsPage } from './pages/employer/EmployerContractsPage'
 import { JobEditorPage } from './pages/employer/JobEditorPage'
 import { AdminUsersPage } from './pages/admin/AdminUsersPage'
 import { FreelancerProposalsPage } from './pages/freelancer/FreelancerProposalsPage'
 import { FreelancerOffersPage } from './pages/freelancer/FreelancerOffersPage'
+import { FreelancerContractsPage } from './pages/freelancer/FreelancerContractsPage'
+import { ContractDashboard } from './pages/contracts/ContractDashboard'
+import { MilestoneDetailPage } from './pages/contracts/MilestoneDetailPage'
+import { MilestoneSubmitForm } from './pages/contracts/MilestoneSubmitForm'
+import { RevisionRequestForm } from './pages/contracts/RevisionRequestForm'
 
 export default function App() {
   return (
@@ -43,6 +49,15 @@ export default function App() {
           />
 
           <Route
+            path="freelancer/contracts"
+            element={
+              <ProtectedRoute roles={['FREELANCER']}>
+                <FreelancerContractsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="employer/jobs"
             element={
               <ProtectedRoute roles={['EMPLOYER']}>
@@ -68,10 +83,52 @@ export default function App() {
           />
 
           <Route
+            path="employer/contracts"
+            element={
+              <ProtectedRoute roles={['EMPLOYER']}>
+                <EmployerContractsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="admin/users"
             element={
               <ProtectedRoute roles={['ADMIN', 'SUPPORTER']}>
                 <AdminUsersPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="contracts/:contractId"
+            element={
+              <ProtectedRoute roles={['EMPLOYER', 'FREELANCER']}>
+                <ContractDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="contracts/:contractId/milestones/:milestoneId"
+            element={
+              <ProtectedRoute roles={['EMPLOYER', 'FREELANCER']}>
+                <MilestoneDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="contracts/:contractId/milestones/:milestoneId/submit"
+            element={
+              <ProtectedRoute roles={['FREELANCER']}>
+                <MilestoneSubmitForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="contracts/:contractId/milestones/:milestoneId/revision"
+            element={
+              <ProtectedRoute roles={['EMPLOYER']}>
+                <RevisionRequestForm />
               </ProtectedRoute>
             }
           />

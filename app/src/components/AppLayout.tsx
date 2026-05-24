@@ -16,7 +16,9 @@ export function AppLayout() {
               <Link to="/jobs">Jobs</Link>
               {user?.role === 'FREELANCER' ? <Link to="/freelancer/proposals">My Proposals</Link> : null}
               {user?.role === 'FREELANCER' ? <Link to="/freelancer/offers">My Offers</Link> : null}
+              {user?.role === 'FREELANCER' ? <Link to="/freelancer/contracts">My Contracts</Link> : null}
               {user?.role === 'EMPLOYER' ? <Link to="/employer/jobs">Employer</Link> : null}
+              {user?.role === 'EMPLOYER' ? <Link to="/employer/contracts">Contracts</Link> : null}
               {user?.role === 'ADMIN' || user?.role === 'SUPPORTER' ? <Link to="/admin/users">Admin</Link> : null}
             </nav>
           </div>

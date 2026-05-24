@@ -21,6 +21,11 @@ export const jobHttp = axios.create({
   withCredentials: true,
 })
 
+export const contractHttp = axios.create({
+  baseURL: env.contractApiBaseUrl,
+  withCredentials: true,
+})
+
 function attachBearer(config: InternalAxiosRequestConfig) {
   const token = getAccessToken()
   if (token) {
@@ -116,3 +121,4 @@ installAuthInterceptors(jobHttp, {
   shouldAttachToken: (cfg) => !isPublicJobBrowseRequest(cfg),
   shouldAttemptRefresh: (cfg) => !isPublicJobBrowseRequest(cfg),
 })
+installAuthInterceptors(contractHttp)
