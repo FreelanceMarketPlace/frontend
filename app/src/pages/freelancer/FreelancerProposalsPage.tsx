@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../auth/AuthContext'
 import * as proposalApi from '../../api/proposalApi'
-import type { ProposalResponse, ProposalStatus } from '../../types/proposal'
+import type { ProposalAttachmentResponse, ProposalResponse, ProposalStatus } from '../../types/proposal'
 
 const statusColors: Record<ProposalStatus, string> = {
   PENDING: 'pill-primary',
@@ -74,6 +74,22 @@ export function FreelancerProposalsPage() {
     }
   }
 
+  const handleDownloadAttachment = async (proposalId: string, attachment: ProposalAttachmentResponse) => {
+    try {
+      const blob = await proposalApi.downloadProposalAttachment(proposalId, attachment)
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = attachment.fileName
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
+      URL.revokeObjectURL(url)
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? err?.message ?? 'Failed to download attachment')
+    }
+  }
+
   if (loading) return <div className="hint">Loading proposals…</div>
 
   return (
@@ -122,6 +138,28 @@ export function FreelancerProposalsPage() {
                 <div className="divider" />
 
                 <div style={{ color: 'var(--muted)', whiteSpace: 'pre-wrap', fontSize: 14 }}>{proposal.coverLetter}</div>
+
+                {proposal.attachments?.length > 0 && (
+                  <div className="stack" style={{ gap: 8 }}>
+                    <div className="hint" style={{ fontSize: 12, fontWeight: 600 }}>Attachments</div>
+                    <div className="stack" style={{ gap: 6 }}>
+                      {proposal.attachments.map((attachment) => (
+                        <div key={attachment.attachmentId} className="row" style={{ justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                          <div className="stack" style={{ gap: 2 }}>
+                            <div style={{ fontSize: 14, fontWeight: 500 }}>{attachment.fileName}</div>
+                            <div className="hint" style={{ fontSize: 12 }}>{attachment.mimeType} · {(attachment.fileSize / 1024).toFixed(1)} KB</div>
+                          </div>
+                          <button
+                            className="btn btn-outline"
+                            onClick={() => handleDownloadAttachment(proposal.id, attachment)}
+                          >
+                            Download
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="hint" style={{ fontSize: 12 }}>
                   Estimated duration: {proposal.estimatedDuration} days
