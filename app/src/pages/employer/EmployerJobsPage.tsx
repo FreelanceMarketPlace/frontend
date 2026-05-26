@@ -22,18 +22,25 @@ export function EmployerJobsPage() {
   const [error, setError] = useState<string | null>(null)
   const [items, setItems] = useState<JobListItem[]>([])
   const [status, setStatus] = useState<string>('')
+  const [page, setPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalElements, setTotalElements] = useState(0)
+  const PAGE_SIZE = 20
   const [closingId, setClosingId] = useState<string | null>(null)
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null)
   const [proposals, setProposals] = useState<ProposalResponse[]>([])
   const [proposalsLoading, setProposalsLoading] = useState(false)
   const [proposalsError, setProposalsError] = useState<string | null>(null)
 
-  async function load() {
+  async function load(pageNum: number = 0) {
     setLoading(true)
     setError(null)
     try {
-      const res = await jobApi.listEmployerJobs({ status: status || undefined, page: 0, size: 20 })
+      const res = await jobApi.listEmployerJobs({ status: status || undefined, page: pageNum, size: PAGE_SIZE })
       setItems(res.items)
+      setPage(res.page)
+      setTotalPages(res.totalPages)
+      setTotalElements(res.totalElements)
     } catch (err: any) {
       setError(err?.response?.data?.message ?? err?.message ?? 'Failed to load employer jobs')
     } finally {
@@ -42,15 +49,15 @@ export function EmployerJobsPage() {
   }
 
   useEffect(() => {
-    load()
-  }, [])
+    load(0)
+  }, [status])
 
   async function closeJob(jobId: string) {
     setClosingId(jobId)
     setError(null)
     try {
       await jobApi.closeJob(jobId)
-      await load()
+      await load(page)
     } catch (err: any) {
       setError(err?.response?.data?.message ?? err?.message ?? 'Close failed')
     } finally {
@@ -114,6 +121,22 @@ export function EmployerJobsPage() {
     }
   }
 
+  const handleDownloadAttachment = async (proposalId: string, attachment: any) => {
+    try {
+      const blob = await proposalApi.downloadProposalAttachment(proposalId, attachment)
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = attachment.fileName
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
+      URL.revokeObjectURL(url)
+    } catch (err: any) {
+      setProposalsError(err?.response?.data?.message ?? err?.message ?? 'Failed to download attachment')
+    }
+  }
+
   return (
     <div className="stack" style={{ gap: 14 }}>
       <div className="row" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -133,7 +156,8 @@ export function EmployerJobsPage() {
           className="row"
           onSubmit={(e) => {
             e.preventDefault()
-            load()
+            setPage(0)
+            load(0)
           }}
         >
           <input
@@ -193,6 +217,29 @@ export function EmployerJobsPage() {
         ))}
       </div>
 
+      {!loading && totalPages > 1 && (
+        <div className="row" style={{ justifyContent: 'center', gap: 8, marginTop: 16 }}>
+          <button
+            className="btn btn-outline"
+            disabled={page === 0}
+            onClick={() => load(Math.max(0, page - 1))}
+          >
+            ← Previous
+          </button>
+          <div className="hint" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>Page {page + 1} of {totalPages}</span>
+            <span style={{ fontSize: 12 }}>({totalElements} total)</span>
+          </div>
+          <button
+            className="btn btn-outline"
+            disabled={page >= totalPages - 1}
+            onClick={() => load(Math.min(totalPages - 1, page + 1))}
+          >
+            Next →
+          </button>
+        </div>
+      )}
+
       {selectedJobId && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card card-pad" style={{ maxWidth: 700, width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
@@ -227,6 +274,29 @@ export function EmployerJobsPage() {
 
                     <div style={{ color: 'var(--muted)', fontSize: 14, whiteSpace: 'pre-wrap' }}>{proposal.coverLetter}</div>
                     <div className="hint" style={{ fontSize: 12 }}>Estimated duration: {proposal.estimatedDuration} days</div>
+
+                    {proposal.attachments && proposal.attachments.length > 0 && (
+                      <div className="stack" style={{ gap: 8, marginTop: 8, padding: '12px', backgroundColor: 'var(--border-light,#f0f0f0)', borderRadius: 6 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600 }}>📎 Tệp đính kèm ({proposal.attachments.length})</div>
+                        <div className="stack" style={{ gap: 6 }}>
+                          {proposal.attachments.map((attachment) => (
+                            <div key={attachment.attachmentId} className="row" style={{ justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                              <div className="stack" style={{ gap: 2 }}>
+                                <div style={{ fontSize: 13 }}>{attachment.fileName}</div>
+                                <div className="hint" style={{ fontSize: 11 }}>{attachment.mimeType} · {(attachment.fileSize / 1024).toFixed(1)} KB</div>
+                              </div>
+                              <button
+                                className="btn btn-outline"
+                                style={{ whiteSpace: 'nowrap' }}
+                                onClick={() => handleDownloadAttachment(proposal.id, attachment)}
+                              >
+                                Tải file
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {proposal.status === 'PENDING' && (
                       <div className="row" style={{ gap: 8, justifyContent: 'flex-end' }}>

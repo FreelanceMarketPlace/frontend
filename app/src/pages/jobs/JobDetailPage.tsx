@@ -4,7 +4,7 @@ import * as jobApi from '../../api/jobApi'
 import * as proposalApi from '../../api/proposalApi'
 import { useAuth } from '../../auth/AuthContext'
 import type { JobDetail } from '../../types/job'
-import type { SubmitProposalRequest } from '../../types/proposal'
+import type { ProposalAttachmentResponse, ProposalResponse, SubmitProposalRequest } from '../../types/proposal'
 
 /* ─── helpers (same as JobListPage) ─── */
 function formatDeadline(iso?: string | null): string {
@@ -97,9 +97,13 @@ export function JobDetailPage() {
   const [showModal, setShowModal]                   = useState(false)
   const [coverLetter, setCoverLetter]               = useState('')
   const [estimatedDuration, setEstimatedDuration]   = useState('')
+  const [selectedFiles, setSelectedFiles]           = useState<File[]>([])
   const [proposalLoading, setProposalLoading]       = useState(false)
   const [proposalError, setProposalError]           = useState<string | null>(null)
   const [proposalSuccess, setProposalSuccess]       = useState(false)
+  const [jobProposals, setJobProposals]             = useState<ProposalResponse[]>([])
+  const [jobProposalsLoading, setJobProposalsLoading] = useState(false)
+  const [jobProposalsError, setJobProposalsError]   = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -117,6 +121,41 @@ export function JobDetailPage() {
     return () => { cancelled = true }
   }, [jobId])
 
+  useEffect(() => {
+    let cancelled = false
+
+    ;(async () => {
+      if (!jobId || !job || user?.role !== 'EMPLOYER' || user.id !== job.employerId) {
+        console.log('Not employer owner, skipping proposal load')
+        setJobProposals([])
+        setJobProposalsError(null)
+        setJobProposalsLoading(false)
+        return
+      }
+
+      try {
+        console.log('Loading proposals for jobId:', jobId)
+        setJobProposalsLoading(true)
+        setJobProposalsError(null)
+        const res = await proposalApi.getJobProposals(jobId)
+        console.log('Proposals loaded:', res.items)
+        console.log('Proposal attachments:', res.items.map(p => ({ id: p.id, attachmentsCount: p.attachments?.length || 0, attachments: p.attachments })))
+        if (!cancelled) {
+          setJobProposals(res.items)
+        }
+      } catch (err: any) {
+        console.error('Error loading proposals:', err)
+        if (!cancelled) {
+          setJobProposalsError(err?.response?.data?.message ?? err?.message ?? 'Không thể tải proposal')
+        }
+      } finally {
+        if (!cancelled) setJobProposalsLoading(false)
+      }
+    })()
+
+    return () => { cancelled = true }
+  }, [jobId, job, user?.role, user?.id])
+
   const handleSubmitProposal = async (e: React.FormEvent) => {
     e.preventDefault()
     setProposalError(null)
@@ -127,10 +166,11 @@ export function JobDetailPage() {
         coverLetter,
         estimatedDuration: Number(estimatedDuration),
       }
-      await proposalApi.submitProposal(jobId, req)
+      await proposalApi.submitProposal(jobId, req, selectedFiles)
       setProposalSuccess(true)
       setCoverLetter('')
       setEstimatedDuration('')
+      setSelectedFiles([])
       const updatedJob = await jobApi.getJob(jobId)
       setJob(updatedJob)
       setTimeout(() => { setShowModal(false); setProposalSuccess(false) }, 1400)
@@ -138,6 +178,22 @@ export function JobDetailPage() {
       setProposalError(err?.response?.data?.message ?? err?.message ?? 'Không thể gửi đề xuất')
     } finally {
       setProposalLoading(false)
+    }
+  }
+
+  const handleDownloadAttachment = async (proposalId: string, attachment: ProposalAttachmentResponse) => {
+    try {
+      const blob = await proposalApi.downloadProposalAttachment(proposalId, attachment)
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = attachment.fileName
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
+      URL.revokeObjectURL(url)
+    } catch (err: any) {
+      setProposalError(err?.response?.data?.message ?? err?.message ?? 'Không thể tải file đính kèm')
     }
   }
 
@@ -161,7 +217,13 @@ export function JobDetailPage() {
   const deadline  = formatDeadline((job as any).deadline)
   const urgentDl  = deadline.startsWith('Còn') && parseInt(deadline.replace('Còn ', '')) <= 3
   const canSubmit = user?.role === 'FREELANCER' && job.status === 'OPEN'
+  const isEmployerOwner = user?.role === 'EMPLOYER' && user.id === job.employerId
   const charLeft  = 500 - coverLetter.length
+
+  // Debug
+  if (typeof window !== 'undefined') {
+    (window as any).DEBUG_JOB = { isEmployerOwner, userRole: user?.role, userId: user?.id, jobEmployerId: job.employerId, jobProposals }
+  }
 
   return (
     <>
@@ -347,6 +409,62 @@ export function JobDetailPage() {
               </div>
             )}
 
+            {isEmployerOwner && (
+              <div className="jd-card">
+                <div className="jd-card-heading">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                  Proposal của freelancer
+                </div>
+
+                {jobProposalsLoading ? (
+                  <div className="hint">Đang tải proposal…</div>
+                ) : jobProposalsError ? (
+                  <div className="jd-error-box" style={{ marginTop: 12 }}>{jobProposalsError}</div>
+                ) : jobProposals.length === 0 ? (
+                  <div className="hint">Chưa có proposal nào.</div>
+                ) : (
+                  <div className="stack" style={{ gap: 10 }}>
+                    {jobProposals.map((proposal) => (
+                      <div key={proposal.id} className="card" style={{ padding: 12, border: '1px solid var(--border,#e5e7eb)' }}>
+                        <div style={{ fontWeight: 600, marginBottom: 6 }}>{proposal.freelancerId}</div>
+                        <div style={{ whiteSpace: 'pre-wrap', color: 'var(--text-muted,#6b7280)', fontSize: 13, marginBottom: 8 }}>
+                          {proposal.coverLetter}
+                        </div>
+                        <div className="hint" style={{ fontSize: 12, marginBottom: 8 }}>
+                          {proposal.estimatedDuration} ngày · {proposal.status}
+                        </div>
+                        {proposal.attachments && proposal.attachments.length > 0 && (
+                          <div className="stack" style={{ gap: 8, marginTop: 12 }}>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted,#6b7280)' }}>
+                              📎 Tệp đính kèm ({proposal.attachments.length})
+                            </div>
+                            <div className="stack" style={{ gap: 6 }}>
+                              {proposal.attachments.map((attachment) => (
+                                <div key={attachment.attachmentId} className="row" style={{ justifyContent: 'space-between', alignItems: 'center', gap: 8, padding: '8px 12px', backgroundColor: 'var(--bg-muted,#f9fafb)', borderRadius: 6 }}>
+                                  <div className="stack" style={{ gap: 2 }}>
+                                    <div style={{ fontSize: 13, fontWeight: 500 }}>{attachment.fileName}</div>
+                                    <div className="hint" style={{ fontSize: 11 }}>{attachment.mimeType} · {(attachment.fileSize / 1024).toFixed(1)} KB</div>
+                                  </div>
+                                  <button
+                                    className="btn btn-outline"
+                                    onClick={() => handleDownloadAttachment(proposal.id, attachment)}
+                                  >
+                                    Tải file
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
           </aside>
         </div>
       </div>
@@ -410,6 +528,27 @@ export function JobDetailPage() {
                     placeholder="Ví dụ: 14"
                     required
                   />
+                </div>
+
+                <div className="jd-field">
+                  <label className="jd-label">File minh chứng</label>
+                  <input
+                    className="jd-input"
+                    type="file"
+                    multiple
+                    accept="image/*,.pdf,.doc,.docx"
+                    onChange={e => setSelectedFiles(Array.from(e.target.files ?? []))}
+                  />
+                  <div className="jd-field-hint">Ảnh, PDF, DOC, DOCX · tối đa 20MB mỗi file</div>
+                  {selectedFiles.length > 0 && (
+                    <div className="stack" style={{ gap: 6, marginTop: 8 }}>
+                      {selectedFiles.map(file => (
+                        <div key={file.name + file.lastModified} className="hint" style={{ fontSize: 12 }}>
+                          • {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {proposalError && (

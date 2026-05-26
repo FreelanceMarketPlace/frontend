@@ -6,6 +6,15 @@ export interface SubmitProposalRequest {
   estimatedDuration: number
 }
 
+export interface ProposalAttachmentResponse {
+  attachmentId: string
+  fileName: string
+  mimeType: string
+  fileSize: number
+  uploadedAt: string
+  downloadUrl: string
+}
+
 export interface ProposalResponse {
   id: string
   jobId: string
@@ -17,6 +26,7 @@ export interface ProposalResponse {
   createdAt: string
   updatedAt: string
   respondedAt: string | null
+  attachments?: ProposalAttachmentResponse[]
 }
 
 export interface CreateOfferRequest {

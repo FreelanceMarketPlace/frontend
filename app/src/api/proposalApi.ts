@@ -5,13 +5,20 @@ import type {
   PageResponse,
   OfferResponse,
   CreateOfferRequest,
+  ProposalAttachmentResponse,
 } from '../types/proposal'
 
 /**
  * Submit a proposal for a job
  */
-export async function submitProposal(jobId: string, req: SubmitProposalRequest) {
-  const res = await jobHttp.post<ProposalResponse>(`/jobs/${jobId}/proposals`, req)
+export async function submitProposal(jobId: string, req: SubmitProposalRequest, attachments: File[] = []) {
+  const formData = new FormData()
+  formData.append('proposal', new Blob([JSON.stringify(req)], { type: 'application/json' }))
+  for (const file of attachments) {
+    formData.append('attachments', file)
+  }
+
+  const res = await jobHttp.post<ProposalResponse>(`/jobs/${jobId}/proposals`, formData)
   return res.data
 }
 
@@ -24,7 +31,13 @@ export async function getJobProposals(jobId: string, status?: string, page = 0, 
     params.status = status
   }
   const res = await jobHttp.get<PageResponse<ProposalResponse>>(`/jobs/${jobId}/proposals`, { params })
-  return res.data
+  return {
+    ...res.data,
+    items: res.data.items.map(p => ({
+      ...p,
+      attachments: p.attachments ?? []
+    }))
+  }
 }
 
 /**
@@ -36,7 +49,13 @@ export async function getFreelancerProposals(status?: string, page = 0, size = 2
     params.status = status
   }
   const res = await jobHttp.get<PageResponse<ProposalResponse>>('/freelancer/proposals', { params })
-  return res.data
+  return {
+    ...res.data,
+    items: res.data.items.map(p => ({
+      ...p,
+      attachments: p.attachments ?? []
+    }))
+  }
 }
 
 /**
@@ -64,6 +83,13 @@ export async function rejectProposal(proposalId: string) {
  */
 export async function withdrawProposal(proposalId: string) {
   const res = await jobHttp.post<ProposalResponse>(`/proposals/${proposalId}/withdraw`, {})
+  return res.data
+}
+
+export async function downloadProposalAttachment(proposalId: string, attachment: ProposalAttachmentResponse) {
+  const res = await jobHttp.get<Blob>(attachment.downloadUrl ?? `/proposals/${proposalId}/attachments/${attachment.attachmentId}/download`, {
+    responseType: 'blob',
+  })
   return res.data
 }
 
