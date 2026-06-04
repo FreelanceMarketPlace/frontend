@@ -32,6 +32,27 @@
   font-size: 14px;
 }
 
+@media (max-width: 768px) {
+  .page-header {
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 20px;
+  }
+
+  .page-header .subtitle {
+    font-size: 13px;
+  }
+}
+
 .empty-state {
   padding: 80px 24px;
   text-align: center;
@@ -57,6 +78,20 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .contracts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contracts-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 .contract-card {
@@ -90,6 +125,26 @@
   font-size: 16px;
   font-weight: 600;
   color: #333;
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    padding: 16px;
+  }
+
+  .card-header h3 {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-header {
+    padding: 12px;
+  }
+
+  .card-header h3 {
+    font-size: 14px;
+  }
 }
 
 .status-badge {
@@ -140,6 +195,19 @@
 .info-row .value {
   color: #333;
   font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  .info-row .label {
+    margin-bottom: 2px;
+  }
 }
 
 .card-action {
