@@ -4,6 +4,7 @@ import * as jobApi from '../../api/jobApi'
 import * as proposalApi from '../../api/proposalApi'
 import type { JobListItem } from '../../types/job'
 import type { ProposalResponse, ProposalStatus } from '../../types/proposal'
+import './EmployerJobsPage.css'
 
 function budgetText(j: JobListItem) {
   if (j.budgetType === 'FIXED') return `FIXED ${j.fixedBudget ?? '—'}`
@@ -138,13 +139,13 @@ export function EmployerJobsPage() {
   }
 
   return (
-    <div className="stack" style={{ gap: 14 }}>
-      <div className="row" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div className="stack" style={{ gap: 6 }}>
+    <div className="employer-jobs-page stack" style={{ gap: 14 }}>
+      <div className="employer-jobs-header">
+        <div className="employer-jobs-title">
           <h1 className="page-title">My jobs</h1>
           <p className="page-subtitle">Create, edit, and close your job postings.</p>
         </div>
-        <div className="row">
+        <div className="employer-jobs-actions">
           <Link className="btn btn-primary" to="/employer/jobs/new">
             Create job
           </Link>
@@ -153,7 +154,7 @@ export function EmployerJobsPage() {
 
       <div className="card card-pad stack">
         <form
-          className="row"
+          className="employer-jobs-filter"
           onSubmit={(e) => {
             e.preventDefault()
             setPage(0)
@@ -165,7 +166,6 @@ export function EmployerJobsPage() {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             placeholder="Filter status (e.g. OPEN)"
-            style={{ flex: 1, minWidth: 240 }}
           />
           <button className="btn btn-primary" type="submit" disabled={loading}>
             {loading ? 'Loading…' : 'Apply'}
@@ -179,19 +179,19 @@ export function EmployerJobsPage() {
 
       {!loading && items.length === 0 ? <div className="alert">No jobs yet.</div> : null}
 
-      <div className="grid">
+      <div className="jobs-grid">
         {items.map((j) => (
-          <div key={j.id} className="card card-pad stack" style={{ gap: 10 }}>
-            <div className="row" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div className="stack" style={{ gap: 4 }}>
+          <div key={j.id} className="card card-pad job-card">
+            <div className="job-card-header">
+              <div className="job-card-title">
                 <div style={{ fontWeight: 800, letterSpacing: '-0.2px' }}>{j.title}</div>
                 <div className="hint">Budget: {budgetText(j)}</div>
               </div>
               <span className="pill pill-primary">{j.status}</span>
             </div>
 
-            <div className="row" style={{ justifyContent: 'space-between' }}>
-              <div className="row">
+            <div className="job-card-actions">
+              <div className="job-card-buttons">
                 <Link className="btn" to={`/jobs/${j.id}`}>
                   View
                 </Link>
@@ -218,7 +218,7 @@ export function EmployerJobsPage() {
       </div>
 
       {!loading && totalPages > 1 && (
-        <div className="row" style={{ justifyContent: 'center', gap: 8, marginTop: 16 }}>
+        <div className="pagination-controls">
           <button
             className="btn btn-outline"
             disabled={page === 0}
@@ -241,13 +241,13 @@ export function EmployerJobsPage() {
       )}
 
       {selectedJobId && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="card card-pad" style={{ maxWidth: 700, width: '90%', maxHeight: '80vh', overflow: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <div style={{ fontWeight: 800, fontSize: 18 }}>
+        <div className="proposals-modal">
+          <div className="proposals-modal-content">
+            <div className="proposals-modal-header">
+              <div className="proposals-modal-title">
                 Proposals for {items.find((j) => j.id === selectedJobId)?.title}
               </div>
-              <button style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer' }} onClick={() => setSelectedJobId(null)}>
+              <button className="proposals-modal-close" onClick={() => setSelectedJobId(null)}>
                 ✕
               </button>
             </div>
@@ -262,8 +262,8 @@ export function EmployerJobsPage() {
             ) : (
               <div className="stack" style={{ gap: 12 }}>
                 {proposals.map((proposal) => (
-                  <div key={proposal.id} className="card card-pad stack" style={{ gap: 10, backgroundColor: 'var(--muted-bg)' }}>
-                    <div className="row" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div key={proposal.id} className="card card-pad proposal-card">
+                    <div className="proposal-status-row">
                       <div className="stack" style={{ gap: 4, flex: 1 }}>
                         <div style={{ fontWeight: 600 }}>Freelancer: {proposal.freelancerId}</div>
                         <div className="row" style={{ gap: 8 }}>
@@ -276,18 +276,17 @@ export function EmployerJobsPage() {
                     <div className="hint" style={{ fontSize: 12 }}>Estimated duration: {proposal.estimatedDuration} days</div>
 
                     {proposal.attachments && proposal.attachments.length > 0 && (
-                      <div className="stack" style={{ gap: 8, marginTop: 8, padding: '12px', backgroundColor: 'var(--border-light,#f0f0f0)', borderRadius: 6 }}>
-                        <div style={{ fontSize: 12, fontWeight: 600 }}>📎 Tệp đính kèm ({proposal.attachments.length})</div>
-                        <div className="stack" style={{ gap: 6 }}>
+                      <div className="proposal-attachments">
+                        <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>📎 Tệp đính kèm ({proposal.attachments.length})</div>
+                        <div className="proposal-attachment-list">
                           {proposal.attachments.map((attachment) => (
-                            <div key={attachment.attachmentId} className="row" style={{ justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                              <div className="stack" style={{ gap: 2 }}>
+                            <div key={attachment.attachmentId} className="proposal-attachment-item">
+                              <div className="proposal-attachment-info">
                                 <div style={{ fontSize: 13 }}>{attachment.fileName}</div>
                                 <div className="hint" style={{ fontSize: 11 }}>{attachment.mimeType} · {(attachment.fileSize / 1024).toFixed(1)} KB</div>
                               </div>
                               <button
                                 className="btn btn-outline"
-                                style={{ whiteSpace: 'nowrap' }}
                                 onClick={() => handleDownloadAttachment(proposal.id, attachment)}
                               >
                                 Tải file
@@ -299,7 +298,7 @@ export function EmployerJobsPage() {
                     )}
 
                     {proposal.status === 'PENDING' && (
-                      <div className="row" style={{ gap: 8, justifyContent: 'flex-end' }}>
+                      <div className="proposal-actions">
                         <button
                           className="btn btn-outline"
                           onClick={() => handleRejectProposal(proposal.id)}
@@ -314,7 +313,7 @@ export function EmployerJobsPage() {
                     )}
 
                     {proposal.status === 'SHORTLISTED' && (
-                      <div className="row" style={{ gap: 8, justifyContent: 'flex-end' }}>
+                      <div className="proposal-actions">
                         <button className="btn btn-primary" onClick={() => handleCreateOffer(proposal)}>
                           Create Offer
                         </button>

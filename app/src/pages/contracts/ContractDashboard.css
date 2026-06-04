@@ -4,6 +4,18 @@
   margin: 0 auto;
 }
 
+@media (max-width: 768px) {
+  .contract-dashboard {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contract-dashboard {
+    padding: 12px;
+  }
+}
+
 .contract-dashboard.loading,
 .contract-dashboard.error {
   display: flex;
@@ -31,6 +43,24 @@
   font-size: 28px;
   font-weight: 600;
   color: #333;
+}
+
+@media (max-width: 768px) {
+  .contract-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .contract-header h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contract-header h1 {
+    font-size: 20px;
+  }
 }
 
 .contract-status-badge {
@@ -66,6 +96,29 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .contract-info {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contract-info {
+    padding: 12px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 .info-item {
@@ -196,4 +249,18 @@
 .milestone-meta .revisions {
   display: flex;
   align-items: center;
+}
+
+@media (max-width: 768px) {
+  .milestone-meta {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .milestone-meta {
+    gap: 12px;
+    font-size: 12px;
+  }
 }

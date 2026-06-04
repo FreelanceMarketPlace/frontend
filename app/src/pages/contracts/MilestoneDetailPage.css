@@ -4,6 +4,18 @@
   margin: 0 auto;
 }
 
+@media (max-width: 768px) {
+  .milestone-detail {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .milestone-detail {
+    padding: 12px;
+  }
+}
+
 .milestone-detail.loading,
 .milestone-detail.error {
   display: flex;
@@ -64,6 +76,32 @@
   line-height: 1.6;
 }
 
+@media (max-width: 768px) {
+  .milestone-header {
+    padding: 20px;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .milestone-header h1 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .milestone-header {
+    padding: 16px;
+  }
+
+  .milestone-header h1 {
+    font-size: 18px;
+  }
+
+  .milestone-header .description {
+    font-size: 13px;
+  }
+}
+
 .status-badge {
   padding: 8px 16px;
   border-radius: 20px;
@@ -105,6 +143,22 @@
   background-color: #f9f9f9;
 }
 
+@media (max-width: 768px) {
+  .milestone-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .milestone-info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+}
+
 .info-card {
   display: flex;
   flex-direction: column;
@@ -136,6 +190,25 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .milestone-actions {
+    padding: 20px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .milestone-actions {
+    padding: 16px;
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .milestone-actions .btn {
+    width: 100%;
+  }
 }
 
 .btn {
