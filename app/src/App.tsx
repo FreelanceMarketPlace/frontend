@@ -8,6 +8,7 @@ import { JobDetailPage } from './pages/jobs/JobDetailPage'
 import { JobListPage } from './pages/jobs/JobListPage'
 import { EmployerJobsPage } from './pages/employer/EmployerJobsPage'
 import { EmployerContractsPage } from './pages/employer/EmployerContractsPage'
+import WalletPage from './pages/employer/WalletPage'
 import { JobEditorPage } from './pages/employer/JobEditorPage'
 import { AdminUsersPage } from './pages/admin/AdminUsersPage'
 import { FreelancerProposalsPage } from './pages/freelancer/FreelancerProposalsPage'
@@ -87,6 +88,15 @@ export default function App() {
             element={
               <ProtectedRoute roles={['EMPLOYER']}>
                 <EmployerContractsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="employer/wallet"
+            element={
+              <ProtectedRoute roles={['EMPLOYER']}>
+                <WalletPage />
               </ProtectedRoute>
             }
           />

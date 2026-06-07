@@ -21,6 +21,7 @@ export function AppLayout() {
               {user?.role === 'FREELANCER' ? <Link to="/freelancer/offers">My Offers</Link> : null}
               {user?.role === 'FREELANCER' ? <Link to="/freelancer/contracts">My Contracts</Link> : null}
               {user?.role === 'EMPLOYER' ? <Link to="/employer/jobs">Employer</Link> : null}
+              {user?.role === 'EMPLOYER' ? <Link to="/employer/wallet">Wallet</Link> : null}
               {user?.role === 'EMPLOYER' ? <Link to="/employer/contracts">Contracts</Link> : null}
               {user?.role === 'ADMIN' || user?.role === 'SUPPORTER' ? <Link to="/admin/users">Admin</Link> : null}
             </nav>
@@ -40,6 +41,7 @@ export function AppLayout() {
                 {user?.role === 'FREELANCER' ? <Link to="/freelancer/offers" onClick={() => setMobileMenuOpen(false)}>My Offers</Link> : null}
                 {user?.role === 'FREELANCER' ? <Link to="/freelancer/contracts" onClick={() => setMobileMenuOpen(false)}>My Contracts</Link> : null}
                 {user?.role === 'EMPLOYER' ? <Link to="/employer/jobs" onClick={() => setMobileMenuOpen(false)}>Employer</Link> : null}
+                {user?.role === 'EMPLOYER' ? <Link to="/employer/wallet" onClick={() => setMobileMenuOpen(false)}>Wallet</Link> : null}
                 {user?.role === 'EMPLOYER' ? <Link to="/employer/contracts" onClick={() => setMobileMenuOpen(false)}>Contracts</Link> : null}
                 {user?.role === 'ADMIN' || user?.role === 'SUPPORTER' ? <Link to="/admin/users" onClick={() => setMobileMenuOpen(false)}>Admin</Link> : null}
               </nav>

@@ -1,0 +1,379 @@
+/* src/pages/employer/WalletPage.css */
+
+.wallet-page {
+  min-height: calc(100vh - 60px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.wallet-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.wallet-page h1 {
+  color: white;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 32px;
+}
+
+/* Wallet Card */
+.wallet-card {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.balance-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.balance-item {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.balance-item label {
+  display: block;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.balance-item .amount {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.balance-item .amount.frozen {
+  color: #ff9800;
+}
+
+.balance-item .amount.total {
+  color: #667eea;
+  font-size: 28px;
+}
+
+.wallet-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f5f7fa;
+}
+
+/* Error Message */
+.error-message {
+  background: #fff3cd;
+  color: #856404;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid #ffc107;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* Deposit Form */
+.deposit-form, .deposit-qr {
+  text-align: center;
+}
+
+.deposit-form h2, .deposit-qr h2 {
+  color: #333;
+  margin-bottom: 25px;
+  font-size: 22px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #666;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 5px;
+  color: #999;
+  font-size: 12px;
+}
+
+/* QR Code Display */
+.qr-display {
+  background: #f5f7fa;
+  padding: 30px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.qr-code {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.qr-info {
+  color: #666;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.qr-info strong {
+  color: #333;
+}
+
+/* Success Message */
+.deposit-success {
+  text-align: center;
+  padding: 20px;
+}
+
+.success-icon {
+  font-size: 60px;
+  color: #4caf50;
+  margin-bottom: 15px;
+}
+
+.deposit-success h2 {
+  color: #4caf50;
+  margin-bottom: 15px;
+}
+
+.deposit-success p {
+  color: #666;
+  margin: 10px 0;
+}
+
+.deposit-success .timestamp {
+  color: #999;
+  font-size: 13px;
+}
+
+/* Transaction History */
+.transaction-history {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.transaction-history h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+.transaction-history table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transaction-history thead {
+  background: #f5f7fa;
+}
+
+.transaction-history th {
+  padding: 15px;
+  text-align: left;
+  color: #666;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transaction-history td {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+.transaction-history tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 12px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.completed {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.status.pending {
+  background: #fff9c4;
+  color: #f57f17;
+}
+
+.status.failed {
+  background: #ffcdd2;
+  color: #c62828;
+}
+
+.amount {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.no-data {
+  text-align: center;
+  color: #999;
+  padding: 30px;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .wallet-page {
+    padding: 20px 10px;
+  }
+
+  .wallet-card {
+    padding: 20px;
+  }
+
+  .balance-section {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .wallet-actions {
+    flex-direction: column;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    padding: 30px;
+  }
+
+  .transaction-history table {
+    font-size: 13px;
+  }
+
+  .transaction-history th,
+  .transaction-history td {
+    padding: 10px;
+  }
+}
